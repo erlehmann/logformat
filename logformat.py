@@ -78,13 +78,6 @@ class chatlog:
             if re.search(uri_pattern, line):
                 line = re.sub(uri_pattern, uri_replacement, line)
 
-            # mandatory wordfilters
-            line = line.replace("saschalobo", "dwightdeisenhower")
-            line = line.replace("Sascha", "Dwight D.")
-            line = line.replace("sascha", "dwight d.")
-            line = line.replace("Lobo", "Eisenhower")
-            line = line.replace("lobo", "eisenhower")
-
             self.html5log += line + "<br/>\n"
 
         self.html5log += """</body>
