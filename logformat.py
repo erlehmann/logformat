@@ -79,8 +79,6 @@ class chatlog:
                 line = re.sub(uri_pattern, uri_replacement, line)
 
             # mandatory wordfilters
-            line = line.replace("Sascha Lobo", "Dwight D. Eisenhower")
-            line = line.replace("sascha lobo", "dwight d. eisenhower")
             line = line.replace("saschalobo", "dwightdeisenhower")
             line = line.replace("Sascha", "Dwight D.")
             line = line.replace("sascha", "dwight d.")
