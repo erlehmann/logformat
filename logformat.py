@@ -55,6 +55,12 @@ class chatlog:
             line = line.replace("'","&apos;")
             line = line.replace("\"","&quot;")
 
+            # input is mixed utf-8 and latin-1
+            try:
+                line = unicode(line,'utf-8','strict').encode('ascii', 'xmlcharrefreplace')
+            except UnicodeDecodeError:
+                line = unicode(line,'latin-1','strict').encode('ascii', 'xmlcharrefreplace')
+
             # remove erroneous spaces
             try:
                 if line[10] == " ":
