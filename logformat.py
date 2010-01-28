@@ -20,6 +20,11 @@ from sys import argv
 from uuid import uuid4
 import re
 
+try:
+    from mod_python import apache
+except:
+    pass
+
 class chatlog:
     def __init__(self, textlog, language):
         """
@@ -100,3 +105,10 @@ if __name__ == '__main__':
     g = open(outfile, "w")
     g.write(nicelog)
     g.close()
+
+def handler(req):
+    req.content_type = "text/html; charset=UTF8"
+    f = open(req.filename)
+    req.write(str(chatlog(f.read(),"de")))
+    f.close()
+    return apache.OK
