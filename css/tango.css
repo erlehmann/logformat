@@ -1,0 +1,51 @@
+* {
+    line-height: 1.5em;
+}
+
+body {
+    background-attachment: fixed;
+    background-image: url("images/internet-group-chat.png");
+    background-position: top right;
+    background-repeat: no-repeat;
+    margin: 1em;
+    padding: 1em;
+}
+
+a {
+    color: #3465a4;
+}
+
+a:active {
+    border: none;
+    outline: none;
+}
+
+a:hover {
+}
+
+.time {
+    /*color: #888a85;*/
+}
+
+.line {
+    border: 1px solid;
+    border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    border-color: transparent;
+    padding: 0.25em;
+}
+
+    .line:target {
+        background-color: #fce94f;
+        border-color: #edd400;
+        color: inherit;
+}
+
+.line.non-dialog {
+    color: #888a85;
+}
+
+.line-marker {
+    margin-right: 0.25em;
+    text-decoration: none;
+}
