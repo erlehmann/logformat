@@ -107,7 +107,7 @@ if __name__ == '__main__':
     g.close()
 
 def handler(req):
-    req.content_type = "text/html; charset=UTF8"
+    req.content_type = "application/xhtml+xml; charset=UTF8"
     f = open(req.filename)
     req.write(str(chatlog(f.read(),"de")))
     f.close()
