@@ -44,7 +44,8 @@ class chatlog:
     <title>Log für ''' + firstline[15:24] + ' ' + firstline[-4:] + '''</title>
     <link rel="stylesheet" href="css/tango.css" title="Defaul-Stil" type="text/css"/>
 </head>
-<body>'''
+<body>
+<!-- link to last line -->'''
 
         for i, line in enumerate(textlog.split("\n")):
 
@@ -93,6 +94,9 @@ class chatlog:
 
         self.html5log += """</body>
 </html>"""
+
+        link = '''<a class="line-link" href="#''' + uuid + '''">⤓</a>'''
+        self.html5log = self.html5log.replace("<!-- link to last line -->", link)
 
     def __str__(self):
         return self.html5log
