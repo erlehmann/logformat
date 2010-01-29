@@ -85,9 +85,11 @@ class chatlog:
 
             # markup links
             uri_pattern = r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)'''
+            uri_pattern_parentheses = r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''' 
             uri_replacement = r'''<a href="\1">\1</a>'''
 
             line = re.sub(uri_pattern, uri_replacement, line)
+            line = re.sub(uri_pattern_parentheses, uri_replacement, line)
 
             self.html5log += line + "<br/>\n"
 
