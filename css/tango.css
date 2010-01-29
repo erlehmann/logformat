@@ -45,6 +45,7 @@ a:hover {
     color: #888a85;
 }
 
+.line-link,
 .line-marker {
     margin-right: 0.25em;
     text-decoration: none;
