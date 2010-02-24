@@ -89,13 +89,6 @@ class chatlog:
             line = re.sub(uri_pattern, uri_replacement, line)
             line = re.sub(uri_pattern_parentheses, uri_replacement, line)
 
-            # mandatory wordfilters
-            line = line.replace("saschalobo", "dwightdeisenhower")
-            line = line.replace("Sascha", "Dwight D.")
-            line = line.replace("sascha", "dwight d.")
-            line = line.replace("Lobo", "Eisenhower")
-            line = line.replace("lobo", "eisenhower")
-
             self.html5log += line + "<br/>\n"
 
             if line == textlog.split("\n")[-1:][0]:
