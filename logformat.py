@@ -17,7 +17,6 @@
 #       MA 02110-1301, USA.
 
 from sys import argv
-from uuid import uuid4
 import re
 
 try:
@@ -47,7 +46,7 @@ class chatlog:
 <body>
 <!-- link to last line -->'''
 
-        for i, line in enumerate(textlog.split("\n")):
+        for lineid, line in enumerate(textlog.split("\n")):
 
             # replace xml chars
             line = line.replace("&","&amp;")
@@ -74,13 +73,12 @@ class chatlog:
                 int(line[:2])
                 int(line[3:5])
                 line = '<span class="time">' + line[:5] + '</span>' + line[5:]
-
-                uuid = str(uuid4())
+    
                 if line[32:36] == "&lt;":
-                    line = '<a class="line-marker" href="#' + uuid + '">#</a><span class="line dialog" id="' + uuid + '">' + line + '</span>'
+                    line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line dialog" id="' + str(lineid) + '">' + line + '</span>'
                 else:
-                    line = '<a class="line-marker" href="#' + uuid + '">#</a><span class="line non-dialog" id="' + uuid + '">' + line + '</span>'
-            except:
+                    line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line non-dialog" id="' + str(lineid) + '">' + line + '</span>'
+            except ValueError:
                 pass
 
             # markup links
@@ -100,11 +98,12 @@ class chatlog:
 
             self.html5log += line + "<br/>\n"
 
+            if line == textlog.split("\n")[-1:][0]:
+                link = '''<a class="line-link" href="#''' + str(lineid-1) + '''">⤓</a>'''
+                self.html5log = self.html5log.replace("<!-- link to last line -->", link)
+
         self.html5log += """</body>
 </html>"""
-
-        link = '''<a class="line-link" href="#''' + uuid + '''">⤓</a>'''
-        self.html5log = self.html5log.replace("<!-- link to last line -->", link)
 
     def __str__(self):
         return self.html5log
