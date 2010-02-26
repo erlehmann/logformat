@@ -82,12 +82,12 @@ class chatlog:
                 pass
 
             # markup links
-            uri_pattern = r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)'''
-            uri_pattern_parentheses = r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''' 
+            uri_patterns = [ r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''', r'''((?<=&lt;)\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=&gt;))''', r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)''', ]
             uri_replacement = r'''<a href="\1">\1</a>'''
 
-            line = re.sub(uri_pattern, uri_replacement, line)
-            line = re.sub(uri_pattern_parentheses, uri_replacement, line)
+            for p in uri_patterns:
+                line, nsubs = re.subn(p, uri_replacement, line)
+                if nsubs > 0: break     # only use first matching pattern
 
             self.html5log += line + "<br/>\n"
 
