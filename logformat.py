@@ -92,7 +92,7 @@ class chatlog:
             self.html5log += line + "<br/>\n"
 
             if line == textlog.split("\n")[-1:][0]:
-                link = '''<a class="line-link" href="#''' + str(lineid-2) + '''">⤓</a>'''
+                link = '''<a class="line-link" href="#''' + str(lineid-1) + '''">⤓</a>'''
                 self.html5log = self.html5log.replace("<!-- link to last line -->", link)
 
         self.html5log += """</body>
