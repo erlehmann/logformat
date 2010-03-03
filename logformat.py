@@ -78,6 +78,8 @@ class chatlog:
                     line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line dialog" id="' + str(lineid) + '">' + line + '</span>'
                 else:
                     line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line non-dialog" id="' + str(lineid) + '">' + line + '</span>'
+
+                lastlineid = lineid
             except ValueError:
                 pass
 
@@ -99,7 +101,7 @@ class chatlog:
             self.html5log += line + "<br/>\n"
 
             if line == textlog.split("\n")[-1:][0]:
-                link = '''<a class="line-link" href="#''' + str(lineid-1) + '''">⤓</a>'''
+                link = '''<a class="line-link" href="#''' + str(lastlineid) + '''">⤓</a>'''
                 self.html5log = self.html5log.replace("<!-- link to last line -->", link)
 
         self.html5log += """</body>
