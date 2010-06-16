@@ -2,6 +2,7 @@ AddHandler mod_python .log
 PythonHandler logformat 
 PythonDebug On
 
+Options +Indexes
 IndexOptions +FancyIndexing +FoldersFirst
 IndexIgnore logformat.py ln.sh screenshots css 
 IndexOrderDefault Descending Name
