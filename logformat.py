@@ -48,6 +48,9 @@ class chatlog:
 
         for lineid, line in enumerate(textlog.split("\n")):
 
+            # remove hosts
+            line = re.sub(r'(^[0-9]{2}:[0-9]{2} [^<][^ ]*) \(.*@.*\) (has (joined|quit|left))', r'\1 \2', line)
+
             # replace xml chars
             line = line.replace("&","&amp;")
             line = line.replace("<","&lt;")
