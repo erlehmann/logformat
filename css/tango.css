@@ -24,6 +24,7 @@ a:hover {
 }
 
 a.plaintextlink {
+    background-color: white;
     position: fixed;
     top: 2em;
     right: 2em;
