@@ -43,6 +43,7 @@ class chatlog:
     <link rel="stylesheet" href="css/tango.css" title="Defaul-Stil" type="text/css"/>
 </head>
 <body>
+<a href="?mode=plain">Plaintext</a><br />
 <!-- link to last line -->'''
 
         for lineid, line in enumerate(textlog.split("\n")):
