@@ -23,6 +23,16 @@ a:active {
 a:hover {
 }
 
+a.plaintextlink {
+    position: fixed;
+    top: 2em;
+    right: 2em;
+}
+
+    a.plaintextlink + br {
+        display: none;
+    }
+
 .time {
     /*color: #888a85;*/
 }
