@@ -18,6 +18,8 @@
 
 from sys import argv
 import re
+import time
+import locale
 
 try:
     from mod_python import apache
@@ -33,13 +35,15 @@ class chatlog:
         self.log = ""
 
         firstline = textlog.split("\n")[0]
+        locale.setlocale(locale.LC_ALL, "de_DE.utf-8")
+        datetime = time.strptime(firstline[15:])
 
         if not plain:
             self.log += '''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="''' + language + '''">
 <head>
-    <title>Log für ''' + firstline[15:24] + ' ' + firstline[-4:] + '''</title>
+    <title>Log für ''' + time.strftime("%A, den %d. %B %Y", datetime) + '''</title>
     <link rel="stylesheet" href="css/tango.css" title="Defaul-Stil" type="text/css"/>
 </head>
 <body>
