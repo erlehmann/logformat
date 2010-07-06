@@ -32,6 +32,12 @@ class chatlog:
         Input a text/plain chatlog from zweipktfkt and get out HTML5 goodness.
         """
 
+        # precompile regular expressions
+        hosts_re = re.compile(r'(^[0-9]{2}:[0-9]{2} [^<][^ ]*) \(.*@.*\) (has (joined|quit|left))')
+        chars_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
+        uri_patterns = [ r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''', r'''((?<=&lt;)\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=&gt;))''', r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)''', ]
+        uri_res = [re.compile(p) for p in uri_patterns]
+
         self.log = ""
 
         firstline = textlog.split("\n")[0]
@@ -58,7 +64,7 @@ class chatlog:
         for lineid, line in enumerate(textlog.split("\n")):
 
             # remove hosts
-            line = re.sub(r'(^[0-9]{2}:[0-9]{2} [^<][^ ]*) \(.*@.*\) (has (joined|quit|left))', r'\1 \2', line)
+            line = hosts_re.sub(r'\1 \2', line)
 
             # replace xml chars
             if not plain:
@@ -77,7 +83,7 @@ class chatlog:
                 line = line.encode('utf-8')
             else:
                 line = line.encode('ascii', 'xmlcharrefreplace')
-                line, count = re.subn(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]','',line)
+                line, count = chars_re.subn('',line)
 
             # remove erroneous spaces
             try:
@@ -106,8 +112,8 @@ class chatlog:
                 uri_patterns = [ r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''', r'''((?<=&lt;)\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=&gt;))''', r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)''', ]
                 uri_replacement = r'''<a href="\1">\1</a>'''
 
-                for p in uri_patterns:
-                    line, nsubs = re.subn(p, uri_replacement, line)
+                for p in uri_res:
+                    line, nsubs = p.subn(uri_replacement, line)
                     if nsubs > 0: break     # only use first matching pattern
 
             self.log += line + ("\n" if plain else "<br/>\n")
