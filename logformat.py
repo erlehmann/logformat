@@ -77,6 +77,7 @@ class chatlog:
                 line = line.encode('utf-8')
             else:
                 line = line.encode('ascii', 'xmlcharrefreplace')
+                line, count = re.subn(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]','',line)
 
             # remove erroneous spaces
             try:
