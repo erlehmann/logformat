@@ -154,15 +154,17 @@ def handler(req):
     else:
         plain = False
 
+    try:
+        f = open(req.filename)
+    except IOError:
+        return apache.HTTP_NOT_FOUND
+
     if plain:
         req.content_type = "text/plain; charset=UTF8"
-        f = open(req.filename)
         req.write(str(chatlog(f.read(),"de",plain=True)))
-        f.close()
-        return apache.OK
     else:
         req.content_type = "application/xhtml+xml; charset=UTF8"
-        f = open(req.filename)
         req.write(str(chatlog(f.read(),"de",plain=False)))
-        f.close()
-        return apache.OK
+
+    f.close()
+    return apache.OK
