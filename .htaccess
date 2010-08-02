@@ -1,4 +1,6 @@
 AddHandler mod_python .log
+AddHandler mod_python .py
+DirectoryIndex "logformat.py"
 PythonHandler logformat 
 PythonDebug On
 

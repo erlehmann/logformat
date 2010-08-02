@@ -20,6 +20,7 @@ from sys import argv
 import re
 import time
 import locale
+import os
 
 try:
     from mod_python import apache
@@ -131,6 +132,32 @@ class chatlog:
     def __str__(self):
         return self.log
 
+class DirectoryListing:
+    def __init__(self, path, language):
+        self.listing = '''<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="''' + language + '''">
+<head>
+    <title>Logs</title>
+    <link rel="stylesheet" href="css/tango.css" title="Defaul-Stil" type="text/css"/>
+</head>
+<body>
+'''
+
+        files = [l for l in os.listdir(path) if l[-4:] == ".log"]
+        files.sort()
+        files.reverse()
+        for f in files:
+            self.listing += "<a href=\"" + f + "\">" + f[:-4] + "</a>"
+            self.listing += " (<a href=\"" + f + "?mode=plain\">plain</a>)"
+            self.listing += "<br />\n"
+
+        self.listing += """</body>
+</html>"""
+
+    def __str__(self):
+        return self.listing
+
 
 if __name__ == '__main__':
     infile = argv[1]
@@ -147,6 +174,13 @@ if __name__ == '__main__':
     g.close()
 
 def handler(req):
+
+    # generate an index
+    if req.filename[-12:] == "logformat.py":
+        req.content_type = "application/xhtml+xml; charset=UTF8"
+        req.write(str(DirectoryListing(os.path.dirname(req.filename), "de")))
+        return apache.OK
+
     if req.args != None:
         params = dict([part.split('=') for part in req.args.split('&')])
         if 'mode' in params and params['mode'] == 'plain':
