@@ -61,6 +61,8 @@ class chatlog:
 <a class="plaintextlink" href="?mode=plain">Plaintext</a><br />
 <!-- link to last line -->'''
 
+        lastlineid = 1
+
         for lineid, line in enumerate(textlog.split("\n")):
 
             # remove hosts
@@ -119,7 +121,7 @@ class chatlog:
             self.log += line + ("\n" if plain else "<br/>\n")
 
             if (not plain) and line == textlog.split("\n")[-1:][0]:
-                link = '''<a class="line-link" href="#''' + str(lastlineid) + '''">⤓</a>'''
+                link = '''<a class="line-link" id="1" href="#''' + str(lastlineid) + '''">⤓</a>'''
                 self.log = self.log.replace("<!-- link to last line -->", link)
 
         if not plain:
