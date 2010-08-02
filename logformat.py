@@ -161,17 +161,23 @@ class DirectoryListing:
 
 if __name__ == '__main__':
     infile = argv[1]
-    outfile = infile + ".xhtml"
+    if os.path.isdir(infile):
+        outfile = os.path.join(infile, "index.xhtml")
+        g = open(outfile,"w")
+        g.write(str(DirectoryListing(infile, "de")))
+        g.close()
+    else:
+        outfile = infile + ".xhtml"
 
-    f = open(infile, "r")
-    input = f.read()
-    f.close()
+        f = open(infile, "r")
+        input = f.read()
+        f.close()
 
-    nicelog = str(chatlog(input, "de"))
+        nicelog = str(chatlog(input, "de"))
 
-    g = open(outfile, "w")
-    g.write(nicelog)
-    g.close()
+        g = open(outfile, "w")
+        g.write(nicelog)
+        g.close()
 
 def handler(req):
 
