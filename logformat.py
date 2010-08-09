@@ -38,6 +38,7 @@ class chatlog:
         chars_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
         uri_patterns = [ r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''', r'''((?<=&lt;)\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=&gt;))''', r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)''', ]
         uri_res = [re.compile(p) for p in uri_patterns]
+        twittername_re = re.compile(r"(?<=[^a-zA-Z0-9_])(@([a-zA-Z0-9_]{2,}))(?=[^a-zA-Z0-9_]|$)")
 
         self.log = ""
 
@@ -117,6 +118,9 @@ class chatlog:
                 for p in uri_res:
                     line, nsubs = p.subn(uri_replacement, line)
                     if nsubs > 0: break     # only use first matching pattern
+
+                # markup twitter names
+                line = twittername_re.sub(r'''<a href="https://twitter.com/\2" class="twitter-link">\1</a>''',line)
 
             self.log += line + ("\n" if plain else "<br/>\n")
 
