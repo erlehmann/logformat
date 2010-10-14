@@ -44,6 +44,7 @@ a.plaintextlink {
     -moz-border-radius: 0.5em;
     border-color: transparent;
     padding: 0.25em;
+    white-space: pre-wrap;
 }
 
     .line:target {
