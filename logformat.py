@@ -61,6 +61,48 @@ class chatlog:
 </head>
 <body>
 <a class="plaintextlink" href="?mode=plain">Plaintext</a><br />
+<label for="compact">
+    <input type="checkbox" id="compact" onclick="save()"/> Compact
+</label>
+<script><![CDATA[
+    document.addEventListener("DOMContentLoaded", restore, false);
+
+    function restore() {
+        var checkbox = document.getElementById('compact');
+        var storage = localStorage;
+        if (storage.getItem('compacted') == 'true') {
+            checkbox.checked = 'true';
+            }
+        showhide();
+    }
+
+    function save() {
+        var checkbox = document.getElementById('compact');
+        var storage = localStorage;
+        storage.setItem('compacted', checkbox.checked)
+        showhide();
+    }
+
+    function showhide() {
+        var checkbox = document.getElementById('compact');
+        var head = document.getElementsByTagName("head")[0];
+
+        // not using localStorage here, so this also works in older browsers
+        if (checkbox.checked) {
+            // hide non-dialog lines
+            var style = document.createElement('style');
+            style.id = 'compact-css';
+            style.textContent = '.non-dialog, .non-dialog + br { display: none; }';
+
+            head.appendChild(style);
+        } else {
+            // show non-dialog lines
+            var style = document.getElementById('compact-css');
+
+            head.removeChild(style);
+        }
+    }
+]]></script>
 <!-- link to last line -->'''
 
         lastlineid = 1
@@ -106,7 +148,7 @@ class chatlog:
                     if line[32:36] == "&lt;":
                         line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line dialog" id="' + str(lineid) + '">' + line + '</span>'
                     else:
-                        line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line non-dialog" id="' + str(lineid) + '">' + line + '</span>'
+                        line = '<a class="line-marker non-dialog" href="#' + str(lineid) + '">#</a><span class="line non-dialog" id="' + str(lineid) + '">' + line + '</span>'
 
                     lastlineid = lineid
                 except ValueError:

@@ -34,6 +34,16 @@ a.plaintextlink {
         display: none;
     }
 
+input#compact {
+    vertical-align: middle;
+}
+
+label[for=compact] {
+    position: absolute;
+    top: 3.5em;
+    right: 2em;
+}
+
 .time {
     /*color: #888a85;*/
 }
