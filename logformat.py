@@ -17,10 +17,12 @@
 #       MA 02110-1301, USA.
 
 from sys import argv
-import re
+
 import time
 import locale
 import os
+
+from tornado import escape
 
 try:
     from mod_python import apache
@@ -32,13 +34,6 @@ class chatlog:
         """
         Input a text/plain chatlog from zweipktfkt and get out HTML5 goodness.
         """
-
-        # precompile regular expressions
-        hosts_re = re.compile(r'(^[0-9]{2}:[0-9]{2} [^<][^ ]*) \(.*@.*\) (has (joined|quit|left))')
-        chars_re = re.compile(u'[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]')
-        uri_patterns = [ r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''', r'''((?<=&lt;)\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=&gt;))''', r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)''', ]
-        uri_res = [re.compile(p) for p in uri_patterns]
-        twittername_re = re.compile(r"(?<=[^a-zA-Z0-9_])(@([a-zA-Z0-9_]{2,}))(?=[^a-zA-Z0-9_]|$)")
 
         self.log = ""
 
@@ -109,27 +104,13 @@ class chatlog:
 
         for lineid, line in enumerate(textlog.split("\n")):
 
-            # remove hosts
-            line = hosts_re.sub(r'\1 \2', line)
-
-            # replace xml chars
-            if not plain:
-                line = line.replace("&","&amp;")
-                line = line.replace("<","&lt;")
-                line = line.replace(">","&gt;")
-                line = line.replace("'","&apos;")
-                line = line.replace("\"","&quot;")
-
             # input is mixed utf-8 and latin-1
             try:
                 line = unicode(line,'utf-8','strict')
             except UnicodeDecodeError:
                 line = unicode(line,'latin-1','strict')
-            if plain:
-                line = line.encode('utf-8')
-            else:
-                line = line.encode('ascii', 'xmlcharrefreplace')
-                line, count = chars_re.subn('',line)
+
+            line = line.encode('utf-8')
 
             # remove erroneous spaces
             try:
@@ -143,26 +124,21 @@ class chatlog:
                 try:
                     int(line[:2])
                     int(line[3:5])
-                    line = '<span class="time">' + line[:5] + '</span>' + line[5:]
-        
-                    if line[32:36] == "&lt;":
-                        line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line dialog" id="' + str(lineid) + '">' + line + '</span>'
+                    timestamp = line[:5]
+
+                    def linkify(text):
+                        return escape.linkify(text).encode('utf-8')
+
+                    if line[6] == "<":
+                        if line[7] == ' ':
+                            line = line[:7] + line[8:]
+                        line = '<a class="line-marker" href="#' + str(lineid) + '">#</a><span class="line dialog" id="' + str(lineid) + '">' + '<span class="time">' + timestamp + '</span>' + linkify(line[5:]) + '</span>'
                     else:
-                        line = '<a class="line-marker non-dialog" href="#' + str(lineid) + '">#</a><span class="line non-dialog" id="' + str(lineid) + '">' + line + '</span>'
+                        line = '<a class="line-marker non-dialog" href="#' + str(lineid) + '">#</a><span class="line non-dialog" id="' + str(lineid) + '">' + linkify(line) + '</span>'
 
                     lastlineid = lineid
                 except ValueError:
                     pass
-
-                # markup links
-                uri_replacement = r'''<a href="\1">\1</a>'''
-
-                for p in uri_res:
-                    line, nsubs = p.subn(uri_replacement, line)
-                    if nsubs > 0: break     # only use first matching pattern
-
-                # markup twitter names
-                line = twittername_re.sub(r'''<a href="https://twitter.com/\2" class="twitter-link">\1</a>''',line)
 
             self.log += line + ("\n" if plain else "<br/>\n")
 
