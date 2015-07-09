@@ -39,6 +39,13 @@ class chatlog:
         uri_patterns = [ r'''((?<=\()\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=\)))''', r'''((?<=&lt;)\b[A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+(?=&gt;))''', r'''(?<!\()\b([A-Za-z][A-Za-z0-9\+\.\-]*:([A-Za-z0-9\.\-_~:/\?#\[\]@!\$&'\(\)\*\+,;=]|%[A-Fa-f0-9]{2})+)''', ]
         uri_res = [re.compile(p) for p in uri_patterns]
         twittername_re = re.compile(r"(?<=[^a-zA-Z0-9_])(@([a-zA-Z0-9_]{2,}))(?=[^a-zA-Z0-9_]|$)")
+        # remove illegal unicode <http://stackoverflow.com/questions/1707890/fast-way-to-filter-illegal-xml-unicode-chars-in-python#answer-22273639>
+        _illegal_unichrs = [(0x00, 0x08), (0x0B, 0x0C), (0x0E, 0x1F),
+                            (0x7F, 0x84), (0x86, 0x9F),
+                            (0xFDD0, 0xFDDF), (0xFFFE, 0xFFFF)]
+        _illegal_ranges = ["%s-%s" % (unichr(low), unichr(high))
+                           for (low, high) in _illegal_unichrs]
+        _illegal_xml_chars_re = re.compile(u'[%s]' % u''.join(_illegal_ranges))
 
         self.log = ""
 
@@ -123,6 +130,8 @@ class chatlog:
             # input is mixed utf-8 and latin-1
             try:
                 line = unicode(line,'utf-8','strict')
+                # remove unicode illegal in XML
+                line, count = _illegal_xml_chars_re.subn('', line)
             except UnicodeDecodeError:
                 line = unicode(line,'latin-1','strict')
             if plain:
